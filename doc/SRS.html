@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Software Requirements Specification</title>
+
+    <style type="text/css">
+
+a:link {
+  color: black;
+}
+
+a:visited {
+  color: black;
+}
+
+a:hover {
+  color: gray;
+}
+
+    </style>
+  </head>
+
+  <body bgcolor="lightgray">
+    <img src="logo.png" align="left" height=80 width=80/>
+    <br><br><br><br>
+    <h1 align="">Project Jordan</h1>
+    <h2 align="">Software Requirements Specification</h2>
+    <br><br>
+    <div id="author">
+      <table>
+       <tr>
+          <td><b>Author:</b></td>
+          <td>Joon Lim</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>Jam Enterprises</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>December, 2015</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>Version 1.0</td>
+        </tr>
+
+      </table>
+    </div>
+
+    <div id="abstract">
+      <table>
+        <tr>
+          <td><b>Abstract:</b></td>
+          <td>This document describes the program requirements for <b>Project Jordan</b> (name pending), a two part project that includes an application designed to help ones fantasy basketball team and a script designed to use public APIs to build a database for the application. The program interface and functionality will both be described as well as the overall goals of the project.</td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="copyright">
+      <h4>Based on IEEE Std 830&#8482;-1998 (R2009) document format</h4>
+        Copyright &#169; 2015 Jam Enterprises<br><br>
+        <i>No part of this publication may be reproduced in any form, in an electronic retrieval system or otherwise, without the prior written permission of the publisher.</i>
+    </div>
+
+    <br>
+
+    <div id="toc" style="background-color: silver; padding:24px;">
+      <h3>Table of Contents</h3>
+      <ol>
+        <li><a href="#sec-1">Introduction</a>
+          <ol>
+            <li><a href="#sec-1.1">Purpose</a></li>
+            <li><a href="#sec-1.2">Scope</a></li>
+            <li><a href="#sec-1.3">Definitions, Acronyms, and Abbreviations</a></li>
+            <li><a href="#sec-1.4">References</a></li>
+            <li><a href="#sec-1.5">Overview</a></li>
+          </ol>
+        </li>
+        <li><a href="#sec-2">Overall Description</a>
+          <ol>
+            <li><a href="#sec-2.1">Product Perspective</a></li>
+            <li><a href="#sec-2.2">Product Functions</a></li>
+            <li><a href="#sec-2.3">User Characteristics</a></li>
+            <li><a href="#sec-2.4">Constraints</a></li>
+            <li><a href="#sec-2.5">Assumptions and Dependencies</a></li>
+          </ol>
+        </li>
+        <li><a href="#sec-3">Sepecific Requirements</a>
+          <ol>
+            <li><a href="#sec-3.1">External Interfaces</a></li>
+            <li><a href="#sec-3.2">Functions</a></li>
+            <li><a href="#sec-3.3">Performance Requirements</a></li>
+            <li><a href="#sec-3.4">Logical Database Requirements</a></li>
+            <li><a href="#sec-3.5">Design Constraints</a></li>
+            <li><a href="#sec-3.6">Software System Attributes</a></li>
+            <li><a href="#sec-3.7">Organizing the Specific Requirements</a></li>
+            <li><a href="#sec-3.8">Additional Comments</a></li>
+          </ol>
+        </li>
+      </ol>
+    </div>
+
+    <br>
+
+    <div id="sec-1">
+      <h3>1. Introduction</h3>
+        This document will layout the requirements for <b>Project Jordan</b> which is composed of two projects, which from here on will be referred to as <b>My Basketball</b> and <b>NBAScrape</b>. <b>My Basketball</b> is a web application that intends to be the goto web site for participants of a Fantasy Basketball league or an avid basketball fan inquiring about player statistics. The application will give the user the ability to view visual representations of chosen categories of all NBA players, which can be used to help users make managerial decisions. <b>NBAScrape</b> is that will parse websites such as http://stats.nba.com/stats, http://www.basketball-reference.com, https://basketballmonster.com, and http://espn.go.com/nba for NBA player information and images to stored in a shared database for <b>My Basketball</b>.
+        <br><br>
+        <b>My Basketball</b> is intended to be the home page for every hardcore NBA fan and Fantasy Basketball team owner. Users will have unique homepages customized to show up-to-date information about their team(s) and players on their watch-list. The goal and difference from other basketball reference websites is the emphasis on visualizing the statistics as graphs. For example, a simple chart of players sorted by PER for the day will be displayed as a neat bar graph, which will allow the user to process the information more quickly and soundly. The eventual goal of this web application is to turn it into a mobile app for iOS and Android platforms.
+        <br><br>
+        <b>My Basketball</b> will not be possible without the efforts of <b>NBAScrape</b>, which wil be an ongoing script that is used to fill the database that backs <b>My Basketball</b>. Some of the information hoped to be scraped includes general player information, daily statistics, player images, and buzzworthy information/links.
+        <br><br>
+        The main purpose of <b>Project Jordan</b> is to gain experience with the following concepts:
+        <ul>
+          <li>Full stack web applications</li>
+          <li>Mobile development</li>
+          <li>Web scraping</li>
+          <li>Object-oriented programming</li>
+          <li>Java</li>
+          <li>Python</li>
+          <li>HTML/CSS</li>
+          <li>JavaScript/jQuery</li>
+          <li>MongoDB</li>
+          <li>Regular Expressions</li>
+          <li>Concurrency</li>
+          <li>Testing with JUnit</li>
+          <li>REST and AJAX</li>
+          <li>Unix server environment</li>
+          <li>Documentation (Javadoc, Software Requirements Specification, Software Design Document)</li>
+          <li>Applying design patterns</li>
+        </ul>
+      </div>
+
+      <div id="sec-1.1">
+        <h4>1.1 Purpose</h4>
+        The purpose of this document is to precisely specify how the two programs of <b>Project Jordan</b> should look and operate. The intended audience for this document is all the members of the development team, from the statisticians, to the software engineer and even salespeople who will ultimately interface with the customers. This document serves as an agreement among all parties and a reference for how the application should ultimately be constructed. Upon completing the reading of this document, one should clearly visualize how it will look and operate as well as understand the rules of baseball and Fantasy Basketball.
+      </div>
+
+      <div id="sec-1.2">
+        <h4>1.2 Scope</h4>  
+        This project has a broad scope, including the use of at least three different languages (for the sake of learning). <b>My Basketball</b> will hopefully have the domain name mybasketball.com which users can go to to access the web application. <b>Project Jordan</b> is currently planned to be completed by ultimately one person (Joon Lim).
+      </div>
+
+      <div id="sec-1.3">
+        <h4>1.3 Definitions, Acronyms, and Abbreviations</h4>
+        <div style="padding-left:24px; padding-right:24px">
+          <b>+/- (Plus/minus)</b> - Box score-based metric for evaulating basketball players' quality and contribution to the team. A player's +/- updates only when the player is active. Each time the player makes a point, the +/- goes up. Each time an opposing team player makes a point while this player is active, the +/- goes down.<br/><br>
+          <b>3P% (3-Point Percentage)</b><br/><br>
+          <b>3PA (3-Point Field Goals Attempted)</b><br/><br>
+          <b>3PM (3-Point Field Goals Made)</b><br/><br>
+          <b>AST (Assists)</b><br/><br>
+          <b>BLK (Blocks)</b><br/><br>
+          <b>C (Center)</b><br/><br>
+          <b>F (Foward)</b><br/><br>
+          <b>FG% (Field Goal Percentage)</b><br/><br>
+          <b>FT% (Free Throw Percentage)</b><br/><br>
+          <b>FTA (Free Throw Attempts)</b><br/><br>
+          <b>FTM (Free Throws Made)</b><br/><br>
+          <b>G (Guard)</b><br/><br>
+          <b>MP (Minutes Played)</b><br/><br>
+          <b>PER (Player efficiency rating)</b>For information and to see the algorithm to compute PER visit <a target="_blank" href="https://en.wikipedia.org/wiki/Player_efficiency_rating">here</a>.<br/><br>
+          <b>PF (Personal Fouls)</b><br/><br>
+          <b>PF (Power Forward)</b><br/><br>
+          <b>PG (Point Guard)</b><br/><br>
+          <b>PTS (Points)</b><br/><br>
+          <b>Per 36</b><br/><br>
+          <b>REB (Rebounds)</b><br/><br>
+          <b>SF (Small Forward)</b><br/><br>
+          <b>SG (Shooting Guard)</b><br/><br>
+          <b>TO (Turnovers)</b><br/>
+        </div>
+      </div>
+
+      <div id="sec-1.4">
+        <h4>1.4 References</h4>
+        <div style="padding-left:24px; padding-right:24px">
+          <b>IEEE Std 830&#8482;-1998 (R2009)</b> - IEEE Recommended Practice for Software Requirements Specification.
+        </div>
+      </div>
+
+      <div id="sec-1.5">
+        <h4>1.5 Overview</h4>
+        This SRS will clearly describe how the <b>My Basketball</b> Web Application and <b>NBAScrape</b> script should operate. This SRS will not go into detail explaining how to play Fantasy Basketball or basketball. Note that this is not a software design description (SDD), which would design how to construct the software using UML. This document does not specify how to build the appropriate technologies, it is simply an agreement concerning what to build. Section 2 of this document will provide the context for the project and specify all the conceptual design and technologies to be used. Section 3 will present how the interface should be laid out for <b>My Basketball</b> and all program functionality.
+      </div>
+    </div>
+
+    <br>
+
+    <div id="sec-2">
+      <h3>2. Overall Description</h3>
+        Search functionality
+
+      <div id="sec-2.1">
+        <h4>2.1 Product Perspective</h4>
+
+        <div id="sec-2.1.2">
+          <h4>2.1.2 User Interfaces</h4>
+          Figure 2.1 below summarizes the functionality of <b>My Basketball</b>.<br><br>
+          <b>Figure 2.1: Overview of Use-Case Diagrams for My Basketball</b>
+          <table style="margin:24px;" width="80%" bgcolor="silver" border="1px" cellspacing="2" cellpadding="2" id="tab-2.1">
+            <tr bgcolor="#ff6600">
+              <td width="20%" align="center"><b>Number</b></td>
+              <td width="40%" align="center"><b>Page</b></td>
+              <td width="40%" align="center"><b>Use Case</b></td>
+            </tr>
+            <tr>
+              <td width="20%" align="left">1</td>
+              <td width="40%" align="left">All pages</td>
+              <td width="40%" align="left">Register a new account.</td>
+            </tr>
+            <tr>
+              <td width="20%" align="left">2</td>
+              <td width="40%" align="left">All pages</td>
+              <td width="40%" align="left">Log into an existing account,</td>
+            </tr>
+            <tr>
+              <td width="20%" align="left">3</td>
+              <td width="40%" align="left">All pages</td>
+              <td width="40%" align="left">Search for a player in the search bar to visit their page.</td>
+            </tr>
+            <tr>
+              <td width="20%" align="left">4</td>
+              <td width="40%" align="left">Home page</td>
+              <td width="40%" align="left">Switch view mode between <b>Team</b>, <b>Watch-list</b>, and <b>All</b>.</td>
+            </tr>
+            <tr>
+              <td width="20%" align="left"></td>
+              <td width="40%" align="left">Player page</td>
+              <td width="40%" align="left">User can view information about a player or players.</td>
+            </tr>
+            <tr>
+              <td width="20%" align="left"></td>
+              <td width="40%" align="left">Compare page</td>
+              <td width="40%" align="left">User can view information about a player or players.</td>
+            </tr>
+
+          </table>
+
+
+          Figure 2.2 below summarizes the functionality of <b>NBAScrape</b>.<br><br>
+          <b>Figure 2.2: Overview of Use-Case Diagrams for NBAScrape</b>
+          <table style="margin:24px;" width="80%" bgcolor="silver" border="1px" cellspacing="2" cellpadding="2" id="tab-2.2">
+            <tr bgcolor="#ff6600">
+              <td width="20%" align="center"><b>Number</b></td>
+              <td width="40%" align="center"><b>Command</b></td>
+              <td width="40%" align="center"><b>Use Case</b></td>
+            </tr>
+            <tr>
+              <td width="20%" align="left">11</td>
+              <td width="40%" align="left"><pre> $    python nbascrape.py</pre></td>
+              <td width="40%" align="left">Display the help message.</td>
+            </tr>
+            <tr>
+              <td width="20%" align="left">12</td>
+              <td width="40%" align="left"><pre> $    python nbascrape.py init</pre></td>
+              <td width="40%" align="left">Initialize database to set up <b>My Basketball</b>.</td>
+            </tr>
+            <tr>
+              <td width="20%" align="left">13</td>
+              <td width="40%" align="left"><pre> $    python nbascrape.py update</pre></td>
+              <td width="40%" align="left">Update an already initialized database with new data if available.</td>
+            </tr>
+            <tr>
+              <td width="20%" align="left">14</td>
+              <td width="40%" align="left"><pre> $    python nbascrape.py autoupdate [HH:MM]</pre></td>
+              <td width="40%" align="left">Run this program in the background to auto-update every day at the given time.</td>
+            </tr>
+            <tr>
+              <td width="20%" align="left">15</td>
+              <td width="40%" align="left"><pre> $    python nbascrape.py destroy</pre></td>
+              <td width="40%" align="left">Delete the database created using <b>NBAScrape</b> if it exists.</td>
+            </tr>
+            <tr>
+              <td width="20%" align="left">16</td>
+              <td width="40%" align="left"><pre> $    python nbascrape.py end</pre></td>
+              <td width="40%" align="left">End all instances of this program if any are running.</td>
+            </tr>
+            <tr>
+              <td width="20%" align="left">17</td>
+              <td width="40%" align="left"><pre> $    python nbascrape.py version</pre></td>
+              <td width="40%" align="left">Display this program's current version.</td>
+            </tr>
+          </table>
+
+        </div>
+
+        <div id="sec-2.1.8">
+          <h4>2.1.8 Site Adaptation Requirements</h4>
+          N/A
+        </div>
+
+      </div>
+
+      <div id="sec-2.2">
+        <h4>2.2 Product Functions</h4>
+        Note that the <b>My Basketball</b> program has read-only access to the database and all of the updating is done through <b>NBAScrape</b>. 
+      </div>
+
+      <div id="sec-2.3">
+        <h4>2.3 User Characteristics</h4>
+        There are two defined end users for <b>My Basketball</b>.<br><br>
+        Fantasy Basketball Team Owner<br>
+        This is someone who is participating in one or more Fantasy Basketball leagues for the current season. There is something on the line (whether it be pride or cash) and the user actively seeks out any information that might give him/her the winning edge. The user will be inclined to make an account so that their team information and watch list are preserved and information and news about each player can be seen right away on the home page.<br><br>
+        Avid NBA Fan<br>
+        This is the fan who loves to watch basketball. They are not necessarily obsessed, but they care enough about the sport to look up highlights and information almost daily. They will be interested to see how players they like are doing in comparison to other players. Their main reason for coming to the site would be to view the previous night's top 10/5 plays or top performers list/graph.<br><br>
+        The one type of user for <b>NBAScrape</b> are those developing <b>My Basketball</b>, for all the data to be used in the web application will come from <b>NBAScrape</b>.
+      </div>
+
+      <div id="sec-2.4">
+        <h4>2.4 Constraints</h4>
+      </div>
+
+      <div id="sec-2.5">
+        <h4>2.5 Assumptions and Dependencies</h4>
+      </div>
+    </div>
+
+    <br>
+
+    <div id="sec-3">
+      <h3>3. Specific Requirements</h3>
+
+      <div id="sec-3.1">
+        <h4>3.1 External Interfaces</h4>
+      </div>
+
+      <div id="sec-3.2">
+        <h4>3.2 Functions</h4>
+      </div>
+
+      <div id="sec-3.3">
+        <h4>3.3 Performance Requirements</h4>
+      </div>
+
+      <div id="sec-3.4">
+        <h4>3.4 Logical Database Requirements</h4>
+      </div>
+
+      <div id="sec-3.5">
+        <h4>3.5 Design Constraints</h4>
+      </div>
+
+      <div id="sec-3.6">
+        <h4>3.6 Software System Attributes</h4>
+      </div
+
+      <div id="sec-3.7">
+        <h4>3.7 Organizing the Specific Requirements</h4>
+      </div
+
+      <div id="sec-3.8">
+        <h4>3.8 Additional Comments</h4>
+      </div
+    </div>
+
+
+
+  </body>
+</html>
