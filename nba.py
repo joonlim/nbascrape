@@ -4,6 +4,7 @@
 import nbascrape_functions as nba
 from subprocess import call
 import sys
+import os
 
 
 def parse_name(argv):
@@ -39,3 +40,8 @@ for line in lines:
 
 nba.create_player_season_file(name, team, id)
 call(["cat", "players/" + name + ".txt"])
+
+# Delete players/ and players.txt
+os.remove("players.txt")
+os.remove("players/" + name + ".txt")
+os.rmdir("players/")
