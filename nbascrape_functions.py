@@ -1,5 +1,37 @@
 import requests
 import os.path
+from colors import Color
+
+class League:
+    GOOD_FG_PCT = 0.52
+    BAD_FG_PCT = 0.37
+
+    GOOD_FG3M = 2.4
+    BAD_FG3M = 0.1
+
+    GOOD_FT_PCT = 0.88
+    BAD_FT_PCT = 0.57
+
+    GOOD_REB = 9.5
+    BAD_REB = 1.7
+
+    GOOD_AST = 6.15
+    BAD_AST = 0.1
+
+    GOOD_STL = 1.75
+    BAD_STL = 0.3
+
+    GOOD_BLK = 1.57
+    BAD_BLK = 0.1
+
+    GOOD_TOV = 0.5
+    BAD_TOV = 3.0
+
+    GOOD_PTS = 21.4
+    BAD_PTS = 6.3
+
+    GOOD_PER = 25.0
+    BAD_PER = 5.0
 
 
 def init():
@@ -72,11 +104,11 @@ def create_player_season_file(name, team, id):
     url = "http://stats.nba.com/stats/playergamelog?PlayerID=" + str(id) + "&Season=2015-16&SeasonType=Regular+Season"
     season_info = download_json(url)
 
-    player_file.write(name + "\n")
+    player_file.write(name + "\t")
     player_file.write(team + "\n")
     player_file.write("\n")
 
-    player_file.write("Date\t\tMatchup\t\tWL\tMIN\tFGM\tFGA\tFG%\t3PM\tFTM\tFTA\tFT%\tREB\tAST\tSTL\tBLK\tTOV\tPF\tPTS\t+/-\tPER\n")
+    player_file.write(Color.YELLOW + "Date\t\tMatchup\t\tWL\tMIN\tFGM\tFGA\tFG%\t3PM\tFTM\tFTA\tFT%\tREB\tAST\tSTL\tBLK\tTOV\tPF\tPTS\t+/-\tPER\n" + Color.NONE)
     games = season_info['resultSets'][0]['rowSet']
 
     total_games = 0
@@ -185,7 +217,7 @@ def create_player_season_file(name, team, id):
             avg_ft_pct = "%.3f" % 0
 
         # player totals
-        player_file.write("\n\t\tTotal\t\tGames\tMIN\tFGM\tFGA\tFG%\t3PM\tFTM\tFTA\tFT%\tREB\tAST\tSTL\tBLK\tTOV\tPF\tPTS\t+/-\n")
+        player_file.write(Color.YELLOW + "\n\t\tTotal\t\tGames\tMIN\tFGM\tFGA\tFG%\t3PM\tFTM\tFTA\tFT%\tREB\tAST\tSTL\tBLK\tTOV\tPF\tPTS\t+/-\n" + Color.NONE)
         player_file.write("\t\t\t\t" + str(total_games) + "\t" + str(total_min) + "\t" + str(total_fgm) + "\t" + str(total_fga) + "\t" + avg_fg_pct + "\t" + str(total_fg3m) + "\t" + str(total_ftm) + "\t" + str(total_fta) + "\t" + avg_ft_pct + "\t" + str(total_reb) + "\t" + str(total_ast) + "\t" + str(total_stl) + "\t" + str(total_blk) + "\t" + str(total_tov) + "\t" + str(total_pf) + "\t" + str(total_pts) + "\t" + str(total_plus_minus) + "\n")
 
         avg_min = total_min / total_games
@@ -231,7 +263,7 @@ def create_player_season_file(name, team, id):
         avg_per = "%.3f" % avg_per
 
         # player averages
-        player_file.write("\n\t\tAverage\t\t\tMIN\tFGM\tFGA\tFG%\t3PM\tFTM\tFTA\tFT%\tREB\tAST\tSTL\tBLK\tTOV\tPF\tPTS\tPER\n")
+        player_file.write(Color.YELLOW + "\n\t\tAverage\t\t\tMIN\tFGM\tFGA\tFG%\t3PM\tFTM\tFTA\tFT%\tREB\tAST\tSTL\tBLK\tTOV\tPF\tPTS\t+/-\tPER\n" + Color.NONE)
         player_file.write("\t\t\t\t\t" + avg_min + "\t" + avg_fgm + "\t" + avg_fga + "\t" + avg_fg_pct + "\t" + avg_fg3m + "\t" + avg_ftm + "\t" + avg_fta + "\t" + avg_ft_pct + "\t" + avg_reb + "\t" + avg_ast + "\t" + avg_stl + "\t" + avg_blk + "\t" + avg_tov + "\t" + avg_pf + "\t" + avg_pts + "\t" + str(total_plus_minus) + "\t" + avg_per + "\n")
 
     player_file.close()

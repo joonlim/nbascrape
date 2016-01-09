@@ -39,6 +39,7 @@ for line in lines:
 
 
 nba.create_player_season_file(name, team, id)
+print()
 call(["cat", "players/" + name + ".txt"])
 
 # Delete players/ and players.txt
