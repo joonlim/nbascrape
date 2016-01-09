@@ -18,8 +18,25 @@ def download_json(json_url):
     response.raise_for_status()
     return response.json()
 
-# def calculateUnadjustedPER():
-#     factor = (2 / 3) - (0.5 * ())
+def calculateLinearPER(min, fgm, fga, fg3m, ftm, fta, oreb, dreb, ast, stl, blk, tov, pf, pts):
+    # [ FGM x 85.910
+    # + Steals x 53.897
+    # + 3PTM x 51.757
+    # + FTM x 46.845
+    # + Blocks x 39.190
+    # + Offensive_Reb x 39.190
+    # + Assists   x 34.677
+    # + Defensive_Reb x 14.707
+    # - Foul x 17.174
+    # - FT_Miss   x 20.091
+    # - FG_Miss   x 39.190
+    # - TO x 53.897 ]
+    # x (1 / Minutes).
+    linear_per_total = (fgm * 85.910) + (stl * 53.897) + (fg3m * 51.757) + (ftm * 46.845) + (blk * 39.190) + (oreb * 39.190) + (ast * 34.677) + (dreb * 14.707) - (pf * 17.174) - ((fta - ftm) * 20.091) - ((fga - fgm) * 39.190) - (tov * 53.897)
+    if min == 0:
+        return 0
+    else:
+        return linear_per_total / min
 
 
 # Downloads player info into a file called players.txt
@@ -59,7 +76,7 @@ def create_player_season_file(name, team, id):
     player_file.write(team + "\n")
     player_file.write("\n")
 
-    player_file.write("Date\t\tMatchup\t\tWL\tMIN\tFGM\tFGA\tFG%\t3PM\tFTM\tFTA\tFT%\tREB\tAST\tSTL\tBLK\tTOV\tPF\tPTS\t+/-\n")
+    player_file.write("Date\t\tMatchup\t\tWL\tMIN\tFGM\tFGA\tFG%\t3PM\tFTM\tFTA\tFT%\tREB\tAST\tSTL\tBLK\tTOV\tPF\tPTS\t+/-\tPER\n")
     games = season_info['resultSets'][0]['rowSet']
 
     total_games = 0
@@ -69,6 +86,8 @@ def create_player_season_file(name, team, id):
     total_fg3m = 0
     total_ftm = 0
     total_fta = 0
+    total_oreb = 0
+    total_dreb = 0
     total_reb = 0
     total_ast = 0
     total_stl = 0
@@ -116,6 +135,12 @@ def create_player_season_file(name, team, id):
         else:
             ft_pct = "%.3f" % 0
 
+        oreb = game[16]
+        total_oreb += oreb
+
+        dreb = game[17]
+        total_dreb += dreb
+
         reb = game[18]
         total_reb += reb
 
@@ -140,7 +165,10 @@ def create_player_season_file(name, team, id):
         plus_minus = game[25]
         total_plus_minus += plus_minus
 
-        player_file.write(date + "\t" + matchup + "\t" + wl + "\t" + str(min) + "\t" + str(fgm) + "\t" + str(fga) + "\t" + str(fg_pct) + "\t" + str(fg3m) + "\t" + str(ftm) + "\t" + str(fta) + "\t" + str(ft_pct) + "\t" + str(reb) + "\t" + str(ast) + "\t" + str(stl) + "\t" + str(blk) + "\t" + str(tov) + "\t" + str(pf) + "\t" + str(pts) + "\t" + str(plus_minus) + "\n")
+        per = calculateLinearPER(min, fgm, fga, fg3m, ftm, fta, oreb, dreb, ast, stl, blk, tov, pf, pts)
+        per = "%.3f" % per
+
+        player_file.write(date + "\t" + matchup + "\t" + wl + "\t" + str(min) + "\t" + str(fgm) + "\t" + str(fga) + "\t" + str(fg_pct) + "\t" + str(fg3m) + "\t" + str(ftm) + "\t" + str(fta) + "\t" + str(ft_pct) + "\t" + str(reb) + "\t" + str(ast) + "\t" + str(stl) + "\t" + str(blk) + "\t" + str(tov) + "\t" + str(pf) + "\t" + str(pts) + "\t" + str(plus_minus) + "\t" + str(per) + "\n")
 
     if total_games > 0:
 
@@ -199,9 +227,12 @@ def create_player_season_file(name, team, id):
         avg_pts = total_pts / total_games
         avg_pts = "%.3f" % avg_pts
 
+        avg_per = calculateLinearPER(total_min, total_fgm, total_fga, total_fg3m, total_ftm, total_fta, total_oreb, total_dreb, total_ast, total_stl, total_blk, total_tov, total_pf, total_pts)
+        avg_per = "%.3f" % avg_per
+
         # player averages
-        player_file.write("\n\t\tAverage\t\t\tMIN\tFGM\tFGA\tFG%\t3PM\tFTM\tFTA\tFT%\tREB\tAST\tSTL\tBLK\tTOV\tPF\tPTS\n")
-        player_file.write("\t\t\t\t\t" + avg_min + "\t" + avg_fgm + "\t" + avg_fga + "\t" + avg_fg_pct + "\t" + avg_fg3m + "\t" + avg_ftm + "\t" + avg_fta + "\t" + avg_ft_pct + "\t" + avg_reb + "\t" + avg_ast + "\t" + avg_stl + "\t" + avg_blk + "\t" + avg_tov + "\t" + avg_pf + "\t" + avg_pts + "\t" + str(total_plus_minus) + "\n")
+        player_file.write("\n\t\tAverage\t\t\tMIN\tFGM\tFGA\tFG%\t3PM\tFTM\tFTA\tFT%\tREB\tAST\tSTL\tBLK\tTOV\tPF\tPTS\tPER\n")
+        player_file.write("\t\t\t\t\t" + avg_min + "\t" + avg_fgm + "\t" + avg_fga + "\t" + avg_fg_pct + "\t" + avg_fg3m + "\t" + avg_ftm + "\t" + avg_fta + "\t" + avg_ft_pct + "\t" + avg_reb + "\t" + avg_ast + "\t" + avg_stl + "\t" + avg_blk + "\t" + avg_tov + "\t" + avg_pf + "\t" + avg_pts + "\t" + str(total_plus_minus) + "\t" + avg_per + "\n")
 
     player_file.close()
 
