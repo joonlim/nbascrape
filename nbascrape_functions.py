@@ -136,6 +136,8 @@ def create_player_season_file(name, team, id):
         date = game[3]
         matchup = game[4]
         wl = game[5]
+        if wl is None:
+            wl = "Ongoing"
 
         min = game[6]
         total_min += min

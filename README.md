@@ -1,5 +1,13 @@
+nba.py - View a player's 2015-16 stats on the terminal.
+
 Usage:
 
-python nba.py kevin durant
+python3 nba.py kevin durant
 
-This module will eventually be used to store data in a MongoDB database to be used for a web application.
+--------------------------------------------------------------------------------
+
+nba_mongodb/nba_downloader.py - Update a mongodb with player and player game information.
+
+Usage:
+
+python3 nba_mongodb/nba_downloader.py
