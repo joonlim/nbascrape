@@ -7,7 +7,8 @@ import requests
 from pymongo import MongoClient
 import datetime
 
-HOST = 'localhost'
+# HOST = 'localhost'
+HOST = "23.23.23.23"
 PORT = 27017
 DB = 'nba_db'
 PLAYERS_COL = 'players'  # nba_db.players collection

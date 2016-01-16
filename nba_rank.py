@@ -2,7 +2,8 @@ from pymongo import MongoClient
 import sys
 
 HOST = 'localhost'
-PORT = 27017
+# PORT = 27017
+PORT = '23.23.23.23'
 DB = 'nba_db'
 PLAYERS_COL = 'players'  # nba_db.players collection
 SEASON_COL = 'season2015-16'
