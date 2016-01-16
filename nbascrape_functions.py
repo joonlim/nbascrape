@@ -129,8 +129,7 @@ def create_player_season_file(name, team, id):
     total_pts = 0
     total_plus_minus = 0
 
-    for i in range(0, len(games)):
-        game = games[i]
+    for game in reversed(games):
         total_games += 1
 
         date = game[3]
