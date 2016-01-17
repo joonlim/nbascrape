@@ -108,5 +108,11 @@ if len(sys.argv) < 2:
 if sys.argv[1] == "-r" or sys.argv[1] == "--rank":
     display_player_rankings()
 
+elif sys.argv[1] == "-i" or sys.arv[1] == "--image":
+    nba.init()
+    nba.download_player_images()
+    os.remove("players/" + name + ".txt")
+    os.rmdir("players/")
+
 else:
     display_player_stats()

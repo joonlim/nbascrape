@@ -1,6 +1,8 @@
 import requests
 import os.path
 from colors import Color
+import sys
+import urllib.request
 
 class League:
     GOOD_FG_PCT = 0.52
@@ -271,3 +273,42 @@ def create_player_season_file(name, team, id):
 
     # sec = 0.2
     # time.sleep(sec)
+
+
+def download_player_images():
+    image_dir = "player_images"
+
+    if not os.path.exists(image_dir):
+        os.makedirs(image_dir)
+
+    log_file = open("download_player_images_logs.txt", "a")
+    image_url_start = 'http://i.cdn.turner.com/nba/nba/.element/img/2.0/sect/statscube/players/large/'
+    image_url_end = '.png'
+
+    players = open("players.txt", "r")
+    lines = players.read()
+    lines = lines.split("\n")
+    for line in lines:
+        player_info = line.split(",")
+        if len(player_info) < 2:
+            # Complete.
+            sys.exit()
+
+        name = player_info[0].lower().replace(' ', '_')
+
+        # Download image
+        image_url = image_url_start + name + image_url_end
+
+        try:
+            download_web_image(image_url, image_dir + "/" + name)
+        except urllib.error.HTTPError:
+            print("Exception caught")
+            log_file.write("Failed to download " + name)
+            continue
+            # sys.exit()
+        print("Successfully downloaded " + name + ".png.")
+
+
+def download_web_image(url, name):
+    full_name = str(name) + ".png"
+    urllib.request.urlretrieve(url, full_name)
