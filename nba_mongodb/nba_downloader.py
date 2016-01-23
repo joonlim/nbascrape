@@ -6,11 +6,12 @@
 import requests
 from pymongo import MongoClient
 import datetime
+from threading import Thread
 
 # HOST = 'localhost'
 HOST = "23.23.23.23"
 PORT = 27017
-DB = 'nba_db'
+DB_NAME = 'nba_db'
 PLAYERS_COL = 'players'  # nba_db.players collection
 SEASON_COL = 'season2015-16'
 CURRENT_SEASON = "2015-16"  # nba_db.2015-16 collection and current season
@@ -21,7 +22,7 @@ class NBA_Downloader():
     def __init__(self, season, host, port, db, players_col, season_col):
         self.season = season
         client = MongoClient(host, port)
-        db = client[DB]
+        db = client[DB_NAME]
         self.players_collection = db[players_col]
         self.season_collection = db[season_col]
         self.teams = self.init_teams()
@@ -31,8 +32,49 @@ class NBA_Downloader():
         all_players_json = self.download_json(all_players_url)
         players_info = all_players_json['resultSets'][0]['rowSet']
 
-        for i in range(0, len(players_info)):
-            id = players_info[i][0]
+        # 7 Threads
+        p0 = 0
+        p1 = len(players_info) // 7
+        p2 = p1 * 2
+        p3 = p1 * 3
+        p4 = p1 * 4
+        p5 = p1 * 5
+        p6 = p1 * 6
+        p7 = len(players_info)
+
+        list0 = players_info[p0:p1]
+        list1 = players_info[p1:p2]
+        list2 = players_info[p2:p3]
+        list3 = players_info[p3:p4]
+        list4 = players_info[p4:p5]
+        list5 = players_info[p5:p6]
+        list6 = players_info[p6:p7]
+
+        thread0 = Thread(target=self.download_info, args=(list0,))
+        thread0.start()
+        thread1 = Thread(target=self.download_info, args=(list1,))
+        thread1.start()
+        thread2 = Thread(target=self.download_info, args=(list2,))
+        thread2.start()
+        thread3 = Thread(target=self.download_info, args=(list3,))
+        thread3.start()
+        thread4 = Thread(target=self.download_info, args=(list4,))
+        thread4.start()
+        thread5 = Thread(target=self.download_info, args=(list5,))
+        thread5.start()
+
+        self.download_info(list6)
+
+        thread0.join()
+        thread1.join()
+        thread2.join()
+        thread3.join()
+        thread4.join()
+        thread5.join()
+
+    def download_info(self, player_info_list):
+        for i in range(0, len(player_info_list)):
+            id = player_info_list[i][0]
             last_updated = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
 
             player_url = 'http://stats.nba.com/stats/commonplayerinfo?PlayerID=' + str(id)
@@ -63,7 +105,51 @@ class NBA_Downloader():
 
     def download_all_players_season(self):
         cursor = self.players_collection.find()
-        for document in cursor:
+        cursor_list = list(cursor)
+
+        # 7 Threads
+        p0 = 0
+        p1 = len(cursor_list) // 7
+        p2 = p1 * 2
+        p3 = p1 * 3
+        p4 = p1 * 4
+        p5 = p1 * 5
+        p6 = p1 * 6
+        p7 = len(cursor_list)
+
+        list0 = cursor_list[p0:p1]
+        list1 = cursor_list[p1:p2]
+        list2 = cursor_list[p2:p3]
+        list3 = cursor_list[p3:p4]
+        list4 = cursor_list[p4:p5]
+        list5 = cursor_list[p5:p6]
+        list6 = cursor_list[p6:p7]
+
+        thread0 = Thread(target=self.download_season, args=(list0,))
+        thread0.start()
+        thread1 = Thread(target=self.download_season, args=(list1,))
+        thread1.start()
+        thread2 = Thread(target=self.download_season, args=(list2,))
+        thread2.start()
+        thread3 = Thread(target=self.download_season, args=(list3,))
+        thread3.start()
+        thread4 = Thread(target=self.download_season, args=(list4,))
+        thread4.start()
+        thread5 = Thread(target=self.download_season, args=(list5,))
+        thread5.start()
+
+        self.download_season(list6)
+
+        thread0.join()
+        thread1.join()
+        thread2.join()
+        thread3.join()
+        thread4.join()
+        thread5.join()
+
+    def download_season(self, player_list):
+
+        for document in player_list:
             id = document['_id']
             name = document['first_name'] + " " + document['last_name']
             self.download_player_season(id, name)
@@ -169,9 +255,9 @@ class NBA_Downloader():
             pf = g[23]
             pts = g[24]
             plus_minus = g[25]
-            linear_PER = self.calculateLinearPER(min, fgm, fga, fg3m, ftm, fta, oreb, dreb, ast, stl, blk, tov, pf, pts)
+            per = self.calculateLinearPER(min, fgm, fga, fg3m, ftm, fta, oreb, dreb, ast, stl, blk, tov, pf, pts)
 
-            total_stats.add(min, fgm, fga, fg3m, fg3a, ftm, fta, oreb, dreb, reb, ast, stl, blk, tov, pf, pts, plus_minus, linear_PER)
+            total_stats.add(min, fgm, fga, fg3m, fg3a, ftm, fta, oreb, dreb, reb, ast, stl, blk, tov, pf, pts, plus_minus, per)
 
             statistics = {
                 "min": min,
@@ -194,7 +280,7 @@ class NBA_Downloader():
                 "pf": pf,
                 "pts": pts,
                 "plus_minus": plus_minus,
-                "linear_PER": round(linear_PER, 3)
+                "per": round(per, 3)
             }
 
             game = {
@@ -241,7 +327,7 @@ class NBA_Downloader():
             "pf": total_stats.pf,
             "pts": total_stats.pts,
             "plus_minus": total_stats.plus_minus,
-            "linear_PER": round(total_stats.linear_PER, 3)
+            "per": round(total_stats.per, 3)
         }
 
         if total_games > 0:
@@ -262,8 +348,8 @@ class NBA_Downloader():
             apf = total_stats.pf / total_games
             apts = total_stats.pts / total_games
             aplus_minus = total_stats.plus_minus / total_games
-            alinear_PER = self.calculateLinearPER(amin, afgm, afga, afg3m, aftm, afta, aoreb, adreb, aast, astl, ablk, atov, apf, apts)
-            average_stats.add(amin, afgm, afga, afg3m, afg3a, aftm, afta, aoreb, adreb, areb, aast, astl, ablk, atov, apf, apts, aplus_minus, alinear_PER)
+            aper = self.calculateLinearPER(amin, afgm, afga, afg3m, aftm, afta, aoreb, adreb, aast, astl, ablk, atov, apf, apts)
+            average_stats.add(amin, afgm, afga, afg3m, afg3a, aftm, afta, aoreb, adreb, areb, aast, astl, ablk, atov, apf, apts, aplus_minus, aper)
 
         average = {
             "min": round(average_stats.min, 3),
@@ -286,7 +372,7 @@ class NBA_Downloader():
             "pf": round(average_stats.pf, 3),
             "pts": round(average_stats.pts, 3),
             "plus_minus": round(average_stats.plus_minus, 3),
-            "linear_PER": round(average_stats.linear_PER, 3)
+            "per": round(average_stats.per, 3)
         }
 
         self.add_season_to_db(id, last_updated, games, total, average)
@@ -316,7 +402,7 @@ class NBA_Downloader():
         teams["DAL"] = Team("Mavericks", "Dallas", "DAL")
         teams["DEN"] = Team("Nuggets", "Denver", "DEN")
         teams["DET"] = Team("Pistons", "Detroit", "DET")
-        teams["GSW"] = Team("Warriors", "Golden State", "GS")
+        teams["GSW"] = Team("Warriors", "Golden State", "GSW")
         teams["HOU"] = Team("Rockets", "Houston", "HOU")
         teams["IND"] = Team("Pacers", "Indiana", "IND")
         teams["LAC"] = Team("Clippers", "Los Angeles", "LAC")
@@ -333,7 +419,7 @@ class NBA_Downloader():
         teams["PHX"] = Team("Suns", "Phoenix", "PHX")
         teams["POR"] = Team("Trailblazers", "Portland", "POR")
         teams["SAC"] = Team("Kings", "Sacramento", "SAC")
-        teams["SAS"] = Team("Spurs", "San Antonio", "SA")
+        teams["SAS"] = Team("Spurs", "San Antonio", "SAS")
         teams["TOR"] = Team("Raptors", "Toronto", "TOR")
         teams["UTA"] = Team("Jazz", "Utah", "UTA")
         teams["WAS"] = Team("Wizards", "Washington", "WAS")
@@ -386,11 +472,11 @@ class NBA_Downloader():
         # - FG_Miss   x 39.190
         # - TO x 53.897 ]
         # x (1 / Minutes).
-        linear_per_total = (fgm * 85.910) + (stl * 53.897) + (fg3m * 51.757) + (ftm * 46.845) + (blk * 39.190) + (oreb * 39.190) + (ast * 34.677) + (dreb * 14.707) - (pf * 17.174) - ((fta - ftm) * 20.091) - ((fga - fgm) * 39.190) - (tov * 53.897)
+        per_total = (fgm * 85.910) + (stl * 53.897) + (fg3m * 51.757) + (ftm * 46.845) + (blk * 39.190) + (oreb * 39.190) + (ast * 34.677) + (dreb * 14.707) - (pf * 17.174) - ((fta - ftm) * 20.091) - ((fga - fgm) * 39.190) - (tov * 53.897)
         if min == 0:
             return 0
         else:
-            return linear_per_total / min
+            return per_total / min
 
 
 class Team():
@@ -427,9 +513,9 @@ class GameStatistics():
         self.pf = 0
         self.pts = 0
         self.plus_minus = 0
-        self.linear_PER = 0
+        self.per = 0
 
-    def add(self, min, fgm, fga, fg3m, fg3a, ftm, fta, oreb, dreb, reb, ast, stl, blk, tov, pf, pts, plus_minus, linear_PER):
+    def add(self, min, fgm, fga, fg3m, fg3a, ftm, fta, oreb, dreb, reb, ast, stl, blk, tov, pf, pts, plus_minus, per):
         self.min += min
         self.fgm += fgm
         self.fga += fga
@@ -447,9 +533,12 @@ class GameStatistics():
         self.pf += pf
         self.pts += pts
         self.plus_minus += plus_minus
-        self.linear_PER += linear_PER
+        self.per += per
 
 
-downloader = NBA_Downloader(CURRENT_SEASON, HOST, PORT, DB, PLAYERS_COL, SEASON_COL)
-downloader.download_all_players_general_info()
+downloader = NBA_Downloader(CURRENT_SEASON, HOST, PORT, DB_NAME, PLAYERS_COL, SEASON_COL)
+
+# downloader.download_all_players_general_info()
 downloader.download_all_players_season()
+
+# -info -game -all

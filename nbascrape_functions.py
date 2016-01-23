@@ -66,11 +66,11 @@ def calculateLinearPER(min, fgm, fga, fg3m, ftm, fta, oreb, dreb, ast, stl, blk,
     # - FG_Miss   x 39.190
     # - TO x 53.897 ]
     # x (1 / Minutes).
-    linear_per_total = (fgm * 85.910) + (stl * 53.897) + (fg3m * 51.757) + (ftm * 46.845) + (blk * 39.190) + (oreb * 39.190) + (ast * 34.677) + (dreb * 14.707) - (pf * 17.174) - ((fta - ftm) * 20.091) - ((fga - fgm) * 39.190) - (tov * 53.897)
+    per_total = (fgm * 85.910) + (stl * 53.897) + (fg3m * 51.757) + (ftm * 46.845) + (blk * 39.190) + (oreb * 39.190) + (ast * 34.677) + (dreb * 14.707) - (pf * 17.174) - ((fta - ftm) * 20.091) - ((fga - fgm) * 39.190) - (tov * 53.897)
     if min == 0:
         return 0
     else:
-        return linear_per_total / min
+        return per_total / min
 
 
 # Downloads player info into a file called players.txt
@@ -281,7 +281,8 @@ def download_player_images():
     if not os.path.exists(image_dir):
         os.makedirs(image_dir)
 
-    log_file = open("download_player_images_logs.txt", "a")
+    log_file = open("download_player_images_logs.txt", "w")
+    log_file.write("Failed to download: \n")
     image_url_start = 'http://i.cdn.turner.com/nba/nba/.element/img/2.0/sect/statscube/players/large/'
     image_url_end = '.png'
 
@@ -294,7 +295,8 @@ def download_player_images():
             # Complete.
             sys.exit()
 
-        name = player_info[0].lower().replace(' ', '_')
+        # Edit name
+        name = edit_name(player_info[0])
 
         # Download image
         image_url = image_url_start + name + image_url_end
@@ -302,8 +304,8 @@ def download_player_images():
         try:
             download_web_image(image_url, image_dir + "/" + name)
         except urllib.error.HTTPError:
-            print("Exception caught")
-            log_file.write("Failed to download " + name)
+            print("Exception caught: Failed to download " + name)
+            log_file.write(name + "\n")
             continue
             # sys.exit()
         print("Successfully downloaded " + name + ".png.")
@@ -312,3 +314,43 @@ def download_player_images():
 def download_web_image(url, name):
     full_name = str(name) + ".png"
     urllib.request.urlretrieve(url, full_name)
+
+
+def download_missed_players():
+    image_dir = "player_images"
+    image_url_start = 'http://i.cdn.turner.com/nba/nba/.element/img/2.0/sect/statscube/players/large/'
+    image_url_end = '.png'
+    # Guys that are always failed to download:
+    missed_players = [
+        'dj_augustin',
+        'jose_barea',
+        'timothy_hardaway',
+        'oj_mayo',
+        'etwaun_moore',
+        'larry_nance',
+        'jj_obrien',
+        'johnny_obryant',
+        'kyle_oquinn',
+        'kelly_oubre',
+        'dangelo_russell',
+        'jr_smith',
+        'amare_stoudemire'
+    ]
+
+    for name in missed_players:
+
+        # Download image
+        image_url = image_url_start + name + image_url_end
+
+        try:
+            download_web_image(image_url, image_dir + "/" + name)
+        except urllib.error.HTTPError:
+            print("Exception caught: Failed to download " + name)
+            continue
+            # sys.exit()
+        print("Successfully downloaded " + name + ".png.")
+
+
+def edit_name(name):
+    return name.lower().replace(' ', '_').replace('.', '').replace("'", "")
+    

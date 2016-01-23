@@ -61,7 +61,7 @@ def display_player_rankings():
         pf = p["pf"]
         pts = p["pts"]
         plus_minus = p["plus_minus"]
-        per = p["linear_PER"]
+        per = p["per"]
 
         print(wl + "\t" + str(min) + "\t" + str(fgm) + "\t" + str(fga) + "\t" + str(fg_pct) + "\t" + str(fg3m) + "\t" + str(fg3a) + "\t" + str(fg3_pct) + "\t" + str(ftm) + "\t" + str(fta) + "\t" + str(ft_pct) + "\t" + str(reb) + "\t" + str(ast) + "\t" + str(stl) + "\t" + str(blk) + "\t" + str(tov) + "\t" + str(pf) + "\t" + str(pts) + "\t" + str(plus_minus) + "\t" + str(per) + "\t" + name)
 
@@ -108,11 +108,14 @@ if len(sys.argv) < 2:
 if sys.argv[1] == "-r" or sys.argv[1] == "--rank":
     display_player_rankings()
 
-elif sys.argv[1] == "-i" or sys.arv[1] == "--image":
+elif sys.argv[1] == "-i" or sys.argv[1] == "--image":
     nba.init()
     nba.download_player_images()
     os.remove("players/" + name + ".txt")
     os.rmdir("players/")
+
+elif sys.argv[1] == '-m' or sys.argv[1] == "--missed":
+    nba.download_missed_players()
 
 else:
     display_player_stats()

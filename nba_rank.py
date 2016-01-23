@@ -4,7 +4,7 @@ import sys
 # HOST = 'localhost'
 HOST = '23.23.23.23'
 PORT = 27017
-DB = 'nba_db'
+DB_NAME = 'nba_db'
 PLAYERS_COL = 'players'  # nba_db.players collection
 SEASON_COL = 'season2015-16'
 CURRENT_SEASON = "2015-16"  # nba_db.2015-16 collection and current season
@@ -29,7 +29,7 @@ def rank_players_on_date(date, stat, tie_breaker_stat=None):
 
     # Get data from db
     client = MongoClient(HOST, PORT)
-    db = client[DB]
+    db = client[DB_NAME]
     players_collection = db[PLAYERS_COL]
     season_collection = db[SEASON_COL]
 
@@ -75,6 +75,8 @@ def rank_players_on_date(date, stat, tie_breaker_stat=None):
         ftm = stats["ftm"]
         fta = stats["fta"]
         ft_pct = stats["ft_pct"]
+        dreb = stats["dreb"]
+        oreb = stats["oreb"]
         reb = stats["reb"]
         ast = stats["ast"]
         stl = stats["stl"]
@@ -83,10 +85,11 @@ def rank_players_on_date(date, stat, tie_breaker_stat=None):
         pf = stats["pf"]
         pts = stats["pts"]
         plus_minus = stats["plus_minus"]
-        linear_PER = stats["linear_PER"]
+        per = stats["per"]
 
         player_game = {
             "name": name,
+            "team": team,
             "matchup": matchup,
             "wl": wl,
             "min": min,
@@ -99,6 +102,8 @@ def rank_players_on_date(date, stat, tie_breaker_stat=None):
             "ftm": ftm,
             "fta": fta,
             "ft_pct": ft_pct,
+            "dreb": dreb,
+            "oreb": oreb,
             "reb": reb,
             "ast": ast,
             "stl": stl,
@@ -107,7 +112,7 @@ def rank_players_on_date(date, stat, tie_breaker_stat=None):
             "pf": pf,
             "pts": pts,
             "plus_minus": plus_minus,
-            "linear_PER": linear_PER
+            "per": per
         }
 
         player_game_list.append(player_game)
@@ -200,11 +205,11 @@ def parse_stat(stat):
         "p/m": "plus_minus",
         "plusminus": "plus_minus",
 
-        "linear_per": "linear_PER",
-        "linearper": "linear_PER",
-        "lper": "linear_PER",
-        "l_per": "linear_PER",
-        "per": "linear_PER"
+        "per": "per",
+        "linearper": "per",
+        "lper": "per",
+        "l_per": "per",
+        "per": "per"
     }
 
     return switch.get(stat, "invalid")
