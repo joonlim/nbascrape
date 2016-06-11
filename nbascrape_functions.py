@@ -2,7 +2,7 @@ import requests
 import os.path
 from colors import Color
 import sys
-import urllib.request
+from urllib.request import Request, urlopen
 
 class League:
     GOOD_FG_PCT = 0.52
@@ -48,7 +48,8 @@ def init():
 
 
 def download_json(json_url):
-    response = requests.get(json_url)
+    # response = requests.get(json_url)
+    response = requests.get(json_url, headers={'User-Agent': 'Mozilla/5.0'})
     response.raise_for_status()
     return response.json()
 

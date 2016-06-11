@@ -67,9 +67,9 @@ def display_player_rankings():
 
     print(Color.YELLOW + "WL\tMIN\tFGM\tFGA\tFG%\t3PM\t3PA\t3P%\tFTM\tFTA\tFT%\tREB\tAST\tSTL\tBLK\tTOV\tPF\tPTS\t+/-\tPER\tName" + Color.NONE)
 
+
 def display_player_stats():
     nba.init()
-
     if len(sys.argv) < 2:
         print("Please enter a player name.")
         sys.exit()

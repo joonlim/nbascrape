@@ -7,6 +7,7 @@ import requests
 from pymongo import MongoClient
 import datetime
 from threading import Thread
+from sys import argv
 
 # HOST = 'localhost'
 HOST = "23.23.23.23"
@@ -536,9 +537,19 @@ class GameStatistics():
         self.per += per
 
 
-downloader = NBA_Downloader(CURRENT_SEASON, HOST, PORT, DB_NAME, PLAYERS_COL, SEASON_COL)
+if len(argv) > 1:
+    downloader = NBA_Downloader(CURRENT_SEASON, HOST, PORT, DB_NAME, PLAYERS_COL, SEASON_COL)
 
-# downloader.download_all_players_general_info()
-downloader.download_all_players_season()
+    if argv[1] == "info":
+        downloader.download_all_players_general_info()
+    elif argv[1] == "season":
+        downloader.download_all_players_season()
+    elif argv[1] == "all":
+        downloader.download_all_players_general_info()
+        downloader.download_all_players_season()
+    else:
+        print("Enter a correct flag.")
+else:
+    print("Enter a correct flag.")
 
 # -info -game -all
