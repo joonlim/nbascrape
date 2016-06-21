@@ -9,8 +9,8 @@ import datetime
 from threading import Thread
 from sys import argv
 
-# HOST = 'localhost'
-HOST = "23.23.23.23"
+HOST = 'localhost'
+# HOST = "23.23.23.23"
 PORT = 27017
 DB_NAME = 'nba_db'
 PLAYERS_COL = 'players'  # nba_db.players collection
@@ -158,7 +158,8 @@ class NBA_Downloader():
     # Private
 
     def download_json(self, json_url):
-        response = requests.get(json_url)
+        # response = requests.get(json_url)
+        response = requests.get(json_url, headers={'User-Agent': 'Mozilla/5.0'}) 
         response.raise_for_status()
         return response.json()
 
