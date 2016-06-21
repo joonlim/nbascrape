@@ -96,7 +96,7 @@ def download_player_info(players_file_name):
     players_file.close()
 
 
-def create_player_season_file(name, team, id):
+def create_player_season_file(name, team, id, season):
 
     path = "players/" + name + ".txt"
 
@@ -104,7 +104,7 @@ def create_player_season_file(name, team, id):
 
     player_file = open(path, "w")
 
-    url = "http://stats.nba.com/stats/playergamelog?PlayerID=" + str(id) + "&Season=2015-16&SeasonType=Regular+Season"
+    url = "http://stats.nba.com/stats/playergamelog?PlayerID=" + str(id) + "&Season=2015-16&SeasonType={0}".format(season)
     season_info = download_json(url)
 
     player_file.write(name + "\t")

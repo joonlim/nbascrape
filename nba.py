@@ -77,6 +77,8 @@ def display_player_stats():
     sys.argv.pop(0)
     arg_name = parse_name(sys.argv)
 
+    season = "Playoffs"
+
     players = open("players.txt", "r")
     lines = players.read()
     lines = lines.split("\n")
@@ -91,7 +93,7 @@ def display_player_stats():
         if arg_name.lower() == name.lower():
             break
 
-    nba.create_player_season_file(name, team, id)
+    nba.create_player_season_file(name, team, id, season)
     print()
     call(["cat", "players/" + name + ".txt"])
 

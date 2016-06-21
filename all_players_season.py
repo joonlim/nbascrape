@@ -14,4 +14,4 @@ for line in lines:
     name = player_info[0]
     team = player_info[1]
     id = player_info[2]
-    nba.create_player_season_file(name, team, id)
+    nba.create_player_season_file(name, team, id, "Regular+Season")
